@@ -5,12 +5,30 @@
   "scripts": {
     "dev": "next dev -p 3999",
     "build": "next build",
-    "start": "next start -p 3999"
+    "start": "next start -p 3999",
+    "prettify": "prettier --write \"**/*.js\""
   },
   "dependencies": {
     "@material-ui/core": "^4.11.0",
     "next": "9.5.2",
     "react": "16.13.1",
     "react-dom": "16.13.1"
+  },
+  "devDependencies": {
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.11",
+    "prettier": "^2.0.5"
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,css,md}": "prettier --write"
   }
 }
