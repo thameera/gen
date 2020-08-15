@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script src="https://cdn.auth0.com/js/auth0/9.11.3/auth0.min.js"></script>
+
+  <title>Auth0.js authorize 9 test</title>
+</head>
+<body>
+  <a id="homeurl" href="#">Home</a>
+  <div>
+    <button type="button" onclick="login()">Authorize</button>
+    <button type="button" onclick="check()">Check Session</button>
+    <button type="button" onclick="logout()">Logout</button>
+  </div>
+  <hr>
+  <div id="logs"></div>
+
+  <!-- service worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('worker.js').then(function(registration) {
+          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }, function(err) {
+          console.log('ServiceWorker registration failed: ', err);
+        });
+      });
+    }
+  </script>
+
+  <script>
+    const URL = window.location.href.split('#')[0].split('?')[0]
+    document.querySelector('a#homeurl').href = URL
+    const logs = document.querySelector('#logs')
+    const write = (s, isCode) => {
+      if (s === '---') {
+        logs.innerHTML = `${logs.innerHTML}<hr>`
+        return
+      }
+      const tag = isCode ? 'code' : 'p'
+      logs.innerHTML = `${logs.innerHTML}<${tag}>${s}</${tag}>`
+    }
+    const writeCollapsible = (summary, details) => {
+      const sum = `<summary>${summary}</summary>`
+      logs.innerHTML = `${logs.innerHTML}<details>${sum}<pre>${details}</pre></details>`
+    }
+
+    const DOMAIN = 'tham.auth0.com'
+    const CLIENT_ID = 'EbzWB8b1TXBiO4ZemYaHXIgk28AH5d7E'
+
+
+    var auth0 = new auth0.WebAuth({
+      domain: DOMAIN,
+      clientID: CLIENT_ID,
+      responseType: 'token id_token',
+      redirectUri: URL,
+      scope: 'openid email profile'
+    })
+
+    auth0.parseHash(function(err, data) {
+      if (err) {
+        console.error('Error!')
+        console.log(err)
+        write('Error parsing hash')
+        write(JSON.stringify(err), true)
+        return
+      }
+
+      if (data) {
+        console.log('success!')
+        console.log(data)
+        write('Login successful')
+        writeAuthResult(data)
+      }
+    })
+
+    window.login = function() {
+      auth0.authorize({
+        audience: 'https://thameera.com',
+      })
+    }
+
+    window.check = function() {
+      auth0.checkSession({
+        audience: 'https://thameera.com'
+      }, function(err, authResult) {
+        if (err) {
+          console.log('err!')
+          console.log(err)
+          write('Error checking session')
+          write(JSON.stringify(err), true)
+          return
+        }
+        console.log( authResult)
+        write('\nRenew successful')
+        writeAuthResult(authResult)
+      })
+    }
+
+    window.logout = function() {
+      auth0.logout({
+        returnTo: URL,
+        clientID: CLIENT_ID
+      })
+    }
+
+    const writeAuthResult = data => {
+      const idtp = data.idTokenPayload
+      const at = data.accessToken
+
+      write('ID token:')
+      write(data.idToken, true)
+      write('ID token payload:')
+      writeCollapsible(JSON.stringify(idtp), JSON.stringify(idtp, 0, 4))
+      write('Access token:')
+      write(at, true)
+      if (at.startsWith('eyJ')) {
+        const atp = JSON.parse(atob(at.split('.')[1]))
+        write('Access token payload:')
+        writeCollapsible(JSON.stringify(atp), JSON.stringify(atp, 0, 4))
+      }
+      write('---')
+    }
+
+  </script>
+
+</body>
+</html>

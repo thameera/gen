@@ -8,6 +8,11 @@ const generate = async () => {
     data: { name: 'tmp' },
   })
   console.log(res.data)
+  if (res.data.error) {
+    // TODO handle error
+    return
+  }
+  window.open(res.data.path, '_blank')
 }
 
 export default function GenButtons() {
