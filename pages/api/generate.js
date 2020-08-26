@@ -16,14 +16,15 @@ const replaceVariables = (strategy, template, data) => {
 }
 
 const copyFile = (data) => {
-  const strategy = strategies['auth0js-implicit']
-  console.log({ strategy })
+  const stratName = data.strategy ? data.strategy.name : 'auth0js-implicit'
+  const baseStrategy = strategies[stratName]
+  console.log({ baseStrategy })
 
   const template = fs.readFileSync(
-    `${TEMPLATE_PATH}/${strategy.template}`,
+    `${TEMPLATE_PATH}/${baseStrategy.template}`,
     'utf8'
   )
-  const output = replaceVariables(strategy, template, data)
+  const output = replaceVariables(baseStrategy, template, data.strategy)
   const filepath = `${DEST_PATH}/${data.name}.html`
 
   fs.writeFileSync(filepath, output, 'utf8')

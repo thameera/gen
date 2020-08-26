@@ -1,11 +1,15 @@
+import { useState } from 'react'
 import Head from 'next/head'
 import { Container, Box } from '@material-ui/core'
 
 import GenButtons from '../components/GenButtons'
+import StrategyEditor from '../components/StrategyEditor'
 
 import styles from '../styles/Home.module.css'
 
 export default function Home() {
+  const [strategy, setStrategy] = useState({})
+
   return (
     <Container>
       <Head>
@@ -25,7 +29,10 @@ export default function Home() {
         <h1>Gen</h1>
       </Box>
       <Box>
-        <GenButtons />
+        <StrategyEditor onUpdate={(s) => setStrategy(s)} />
+      </Box>
+      <Box>
+        <GenButtons strategy={strategy} />
       </Box>
     </Container>
   )
