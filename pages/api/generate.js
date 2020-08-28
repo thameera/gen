@@ -1,34 +1,30 @@
 import fs from 'fs'
-import strategies from '../../lib/strategies'
+import * as strategies from '../../lib/strategies'
 
 const DEST_PATH = '/Users/thameerasenanayaka/auth0/ws/tham'
-const TEMPLATE_PATH = '/Users/thameerasenanayaka/auth0/ws/gen/templates'
-
-const replaceVariables = (strategy, template, data) => {
-  let output = template
-  /*const variables = Object.keys(strategy.variables)
-  variables.forEach((k) => {
-    const value = data[k] || strategy.variables[k]
-    const re = new RegExp(`__GEN_VARIABLE_${k}`, 'g')
-    output = output.replace(re, value)
-  })*/
-  return output
-}
 
 const copyFile = (data) => {
-  const stratName = data.strategy ? data.strategy.name : 'auth0js-implicit'
-  const baseStrategy = strategies[stratName]
-  console.log({ baseStrategy })
+  if (!data.name) {
+    return { err: 'Filename not specified' }
+  }
+  if (!data.strategy || !data.strategy.name) {
+    return { err: 'Invalid or no strategy specified' }
+  }
 
-  const template = fs.readFileSync(
-    `${TEMPLATE_PATH}/${baseStrategy.template}`,
-    'utf8'
-  )
-  const output = replaceVariables(baseStrategy, template, data.strategy)
+  const url = `http://tham.localhost/${data.name}.html`
+
+  const output = strategies.getFilledTemplate(fs, data.strategy.name, {
+    tenantDomain: 'tham.auth0.com',
+    clientID: 'EbzWB8b1TXBiO4ZemYaHXIgk28AH5d7E',
+    url,
+    snippets: data.strategy.snippets,
+  })
+
   const filepath = `${DEST_PATH}/${data.name}.html`
-
   fs.writeFileSync(filepath, output, 'utf8')
   console.log(`Wrote to ${filepath}`)
+
+  return { url }
 }
 
 export default (req, res) => {
@@ -38,11 +34,11 @@ export default (req, res) => {
     return
   }
 
-  const data = req.body
-  if (!data.name) {
+  const { err, url } = copyFile(req.body)
+
+  if (err) {
     res.statusCode = 400
-    res.json({ error: 'Filename not specified' })
+    return res.json({ error: err })
   }
-  copyFile(data)
-  res.json({ path: `http://tham.localhost/${data.name}.html` })
+  res.json({ path: url })
 }

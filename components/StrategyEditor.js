@@ -1,9 +1,7 @@
-import strategies from '../lib/strategies'
+import * as strategies from '../lib/strategies'
 import { useState, useEffect } from 'react'
 import {
-  Box,
   TextareaAutosize,
-  Grid,
   GridList,
   GridListTile,
   makeStyles,
@@ -17,8 +15,13 @@ const useStyles = makeStyles({
 
 export default function StrategyEditor({ onUpdate }) {
   const [strategyName, setStrategyName] = useState('auth0js-implicit')
-  const strategy = strategies[strategyName]
-  const [snippets, setSnippets] = useState(strategy.snippets)
+  const stringifiedSnippets = strategies
+    .getDefaultSnippets(strategyName)
+    .map((sn) => ({
+      name: sn.name,
+      value: JSON.stringify(sn.value, 0, 2),
+    }))
+  const [snippets, setSnippets] = useState(stringifiedSnippets)
   const classes = useStyles()
 
   useEffect(() => {
