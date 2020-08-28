@@ -50,13 +50,7 @@
     const CLIENT_ID = 'EbzWB8b1TXBiO4ZemYaHXIgk28AH5d7E'
 
 
-    var auth0 = new auth0.WebAuth({
-      domain: DOMAIN,
-      clientID: CLIENT_ID,
-      responseType: 'token id_token',
-      redirectUri: URL,
-      scope: '__GEN_VARIABLE_scope'
-    })
+    var auth0 = new auth0.WebAuth(__GEN_SNIPPET_constructor)
 
     auth0.parseHash(function(err, data) {
       if (err) {

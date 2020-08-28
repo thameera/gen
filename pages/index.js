@@ -28,9 +28,7 @@ export default function Home() {
       <Box>
         <h1>Gen</h1>
       </Box>
-      <Box>
-        <StrategyEditor onUpdate={(s) => setStrategy(s)} />
-      </Box>
+      <StrategyEditor onUpdate={(s) => setStrategy(s)} />
       <Box>
         <GenButtons strategy={strategy} />
       </Box>
