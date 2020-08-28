@@ -6,12 +6,12 @@ const TEMPLATE_PATH = '/Users/thameerasenanayaka/auth0/ws/gen/templates'
 
 const replaceVariables = (strategy, template, data) => {
   let output = template
-  const variables = Object.keys(strategy.variables)
+  /*const variables = Object.keys(strategy.variables)
   variables.forEach((k) => {
     const value = data[k] || strategy.variables[k]
     const re = new RegExp(`__GEN_VARIABLE_${k}`, 'g')
     output = output.replace(re, value)
-  })
+  })*/
   return output
 }
 
