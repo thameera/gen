@@ -56,8 +56,6 @@
       logs.innerHTML = `${logs.innerHTML}<details>${sum}<pre>${details}</pre></details>`
     }
 
-    const DOMAIN = 'tham.auth0.com'
-    const CLIENT_ID = 'EbzWB8b1TXBiO4ZemYaHXIgk28AH5d7E'
     let auth0
 
     const init = async () => {
@@ -91,9 +89,7 @@
       write('ID token claims:')
       writeCollapsible(JSON.stringify(claims), JSON.stringify(claims, 0, 4))
 
-      console.log('aa')
       const at = await auth0.getTokenSilently()
-      console.log('ba')
       write('Access token:')
       write(at, true)
 
@@ -112,12 +108,12 @@
     }
 
     window.loginRedirect = async () => {
-      await auth0.loginWithRedirect()
+      await auth0.loginWithRedirect(__GEN_SNIPPET_loginWithRedirect)
     }
 
     window.loginPopup = async () => {
       try {
-        await auth0.loginWithPopup()
+        await auth0.loginWithPopup(__GEN_SNIPPET_loginWithPopup)
       } catch (e) {
         writeError(e)
         return
@@ -127,7 +123,7 @@
 
     window.check = async () => {
       try {
-        await auth0.getTokenSilently({ ignoreCache: true })
+        await auth0.getTokenSilently(__GEN_SNIPPET_getTokenSilently)
         writeAuthDetails()
       } catch (e) {
         writeError(e)
@@ -136,10 +132,7 @@
     }
 
     window.logout = async () => {
-      auth0.logout({
-        client_id: CLIENT_ID,
-        returnTo: URL
-      })
+      auth0.logout(__GEN_SNIPPET_logout)
     }
 
     window.onload = init

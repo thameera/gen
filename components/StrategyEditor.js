@@ -68,6 +68,7 @@ export default function StrategyEditor({ onUpdate }) {
               control={<Radio />}
               value={s.id}
               label={s.label}
+              key={s.id}
             />
           ))}
         </RadioGroup>

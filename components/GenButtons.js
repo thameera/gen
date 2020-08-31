@@ -8,9 +8,9 @@ export default function GenButtons({ strategy }) {
       url: '/api/generate',
       data: { name: 'tmp', strategy },
     })
-    console.log(res.data)
     if (res.data.error) {
       // TODO handle error
+      console.log(res.data)
       return
     }
     window.open(res.data.path, '_blank')

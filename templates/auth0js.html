@@ -46,10 +46,6 @@
       logs.innerHTML = `${logs.innerHTML}<details>${sum}<pre>${details}</pre></details>`
     }
 
-    const DOMAIN = 'tham.auth0.com'
-    const CLIENT_ID = 'EbzWB8b1TXBiO4ZemYaHXIgk28AH5d7E'
-
-
     var auth0 = new auth0.WebAuth(__GEN_SNIPPET_constructor)
 
     auth0.parseHash(function(err, data) {
@@ -70,33 +66,15 @@
     })
 
     window.login = function() {
-      auth0.authorize({
-        audience: 'https://thameera.com',
-      })
+      auth0.authorize(__GEN_SNIPPET_authorize)
     }
 
     window.check = function() {
-      auth0.checkSession({
-        audience: 'https://thameera.com'
-      }, function(err, authResult) {
-        if (err) {
-          console.log('err!')
-          console.log(err)
-          write('Error checking session')
-          write(JSON.stringify(err), true)
-          return
-        }
-        console.log( authResult)
-        write('\nRenew successful')
-        writeAuthResult(authResult)
-      })
+      auth0.checkSession(__GEN_SNIPPET_checkSession)
     }
 
     window.logout = function() {
-      auth0.logout({
-        returnTo: URL,
-        clientID: CLIENT_ID
-      })
+      auth0.logout(__GEN_SNIPPET_logout)
     }
 
     const writeAuthResult = data => {
