@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script src="https://cdn.auth0.com/js/auth0-spa-js/1.11/auth0-spa-js.production.js"></script>
+
+  <title>auth0 spa js</title>
+
+<style>
+.hidden { display: none; }
+</style>
+</head>
+<body>
+  <a id="homeurl" href="#">Home</a>
+
+  <div id="loading">Initializing...</div>
+
+  <div id="buttons" class="hidden">
+    <button type="button" onclick="loginRedirect()">Authorize redirect</button>
+    <button type="button" onclick="loginPopup()">Authorize popup</button>
+    <button type="button" onclick="check()">Check Session</button>
+    <button type="button" onclick="logout()">Logout</button>
+  </div>
+
+  <hr>
+  <div id="logs"></div>
+
+  <!-- service worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('worker-spa.js').then(function(registration) {
+          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }, function(err) {
+          console.log('ServiceWorker registration failed: ', err);
+        });
+      });
+    }
+  </script>
+
+  <script>
+    const URL = window.location.href.split('#')[0].split('?')[0]
+    document.querySelector('a#homeurl').href = URL
+    const logs = document.querySelector('#logs')
+    const write = (s, isCode) => {
+      if (s === '---') {
+        logs.innerHTML = `${logs.innerHTML}<hr>`
+        return
+      }
+      const tag = isCode ? 'code' : 'p'
+      logs.innerHTML = `${logs.innerHTML}<${tag}>${s}</${tag}>`
+      if (isCode) logs.innerHTML += '<br>'
+    }
+    const writeCollapsible = (summary, details) => {
+      const sum = `<summary>${summary}</summary>`
+      logs.innerHTML = `${logs.innerHTML}<details>${sum}<pre>${details}</pre></details>`
+    }
+
+    const DOMAIN = 'tham.auth0.com'
+    const CLIENT_ID = 'EbzWB8b1TXBiO4ZemYaHXIgk28AH5d7E'
+    let auth0
+
+    const init = async () => {
+      auth0 = await createAuth0Client(__GEN_SNIPPET_constructor)
+
+      document.getElementById('loading').classList.add('hidden')
+      document.getElementById('buttons').classList.remove('hidden')
+
+      const query = window.location.search;
+      if (query.includes('state=')) {
+        try {
+          await auth0.handleRedirectCallback()
+          writeAuthDetails()
+        } catch (e) {
+          writeError(e)
+        }
+      }
+    }
+
+    const writeAuthDetails = async () => {
+      const authenticated = await auth0.isAuthenticated()
+      if (!authenticated) {
+        write('<strong>Login failed</strong>')
+        return
+      }
+
+      write('<strong>Login successful</strong>')
+      //const user = await auth0.getUser()
+
+      const claims = await auth0.getIdTokenClaims()
+      write('ID token claims:')
+      writeCollapsible(JSON.stringify(claims), JSON.stringify(claims, 0, 4))
+
+      console.log('aa')
+      const at = await auth0.getTokenSilently()
+      console.log('ba')
+      write('Access token:')
+      write(at, true)
+
+      if (at.startsWith('eyJ')) {
+        const atp = JSON.parse(atob(at.split('.')[1]))
+        write('Access token payload:')
+        writeCollapsible(JSON.stringify(atp), JSON.stringify(atp, 0, 4))
+      }
+    }
+
+    const writeError = e => {
+      window.err = e // for debugging
+      write('<strong>Error received</strong>')
+      write(`Error: ${e.error}\n`, true)
+      write(`Message: ${e.error_description}`, true)
+    }
+
+    window.loginRedirect = async () => {
+      await auth0.loginWithRedirect()
+    }
+
+    window.loginPopup = async () => {
+      try {
+        await auth0.loginWithPopup()
+      } catch (e) {
+        writeError(e)
+        return
+      }
+      writeAuthDetails()
+    }
+
+    window.check = async () => {
+      try {
+        await auth0.getTokenSilently({ ignoreCache: true })
+        writeAuthDetails()
+      } catch (e) {
+        writeError(e)
+        return
+      }
+    }
+
+    window.logout = async () => {
+      auth0.logout({
+        client_id: CLIENT_ID,
+        returnTo: URL
+      })
+    }
+
+    window.onload = init
+
+  </script>
+</body>
+</html>
