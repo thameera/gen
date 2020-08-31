@@ -1,12 +1,12 @@
 import { Button } from '@material-ui/core'
 import axios from 'axios'
 
-export default function GenButtons({ strategy }) {
+export default function GenButtons({ env, strategy }) {
   const generate = async () => {
     const res = await axios({
       method: 'POST',
       url: '/api/generate',
-      data: { name: 'tmp', strategy },
+      data: { name: 'tmp', env, strategy },
     })
     if (res.data.error) {
       // TODO handle error

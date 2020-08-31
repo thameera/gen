@@ -7,6 +7,9 @@ const copyFile = (data) => {
   if (!data.name) {
     return { err: 'Filename not specified' }
   }
+  if (!data.env || !data.env.tenantDomain || !data.env.client_id) {
+    return { err: 'No tenant/client specified' }
+  }
   if (!data.strategy || !data.strategy.name) {
     return { err: 'Invalid or no strategy specified' }
   }
@@ -14,8 +17,8 @@ const copyFile = (data) => {
   const url = `http://tham.localhost/${data.name}.html`
 
   const output = strategies.getFilledTemplate(fs, data.strategy.name, {
-    tenantDomain: 'tham.auth0.com',
-    clientID: 'EbzWB8b1TXBiO4ZemYaHXIgk28AH5d7E',
+    tenantDomain: data.env.tenantDomain,
+    clientID: data.env.client_id,
     url,
     snippets: data.strategy.snippets,
   })

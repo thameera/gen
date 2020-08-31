@@ -1,14 +1,25 @@
 import { useState } from 'react'
 import Head from 'next/head'
-import { Container, Box } from '@material-ui/core'
+import { Container, Box, makeStyles } from '@material-ui/core'
 
 import GenButtons from '../components/GenButtons'
 import StrategyEditor from '../components/StrategyEditor'
+import TenantSelector from '../components/TenantSelector'
 
-import styles from '../styles/Home.module.css'
+const useStyles = makeStyles(() => ({
+  tenantSelector: {
+    marginBottom: '20px',
+    padding: '20px',
+    border: '1px solid',
+    borderColor: '#ddd',
+    borderRadius: 10,
+  },
+}))
 
 export default function Home() {
+  const [env, setEnv] = useState({})
   const [strategy, setStrategy] = useState({})
+  const classes = useStyles()
 
   return (
     <Container>
@@ -28,9 +39,14 @@ export default function Home() {
       <Box>
         <h1>Gen</h1>
       </Box>
-      <StrategyEditor onUpdate={(s) => setStrategy(s)} />
+      <Box className={classes.tenantSelector}>
+        <TenantSelector onUpdate={(env) => setEnv(env)} />
+      </Box>
       <Box>
-        <GenButtons strategy={strategy} />
+        <StrategyEditor onUpdate={(s) => setStrategy(s)} />
+      </Box>
+      <Box>
+        <GenButtons strategy={strategy} env={env} />
       </Box>
     </Container>
   )
