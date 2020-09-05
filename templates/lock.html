@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script src="https://cdn.auth0.com/js/lock/11.26.3/lock.min.js"></script>
+
+  <title>Lock</title>
+</head>
+<body>
+  <a id="homeurl" href="#">Home</a>
+  <div>
+    <button type="button" onclick="login()">Login</button>
+    <button type="button" onclick="check()">Renew Session</button>
+    <button type="button" onclick="logout()">Logout</button>
+  </div>
+  <hr>
+  <div id="logs"></div>
+
+  <script>
+    const URL = window.location.href.split('#')[0].split('?')[0]
+    document.querySelector('a#homeurl').href = URL
+    const logs = document.querySelector('#logs')
+    const write = (s, isCode) => {
+      if (s === '---') {
+        logs.innerHTML = `${logs.innerHTML}<hr>`
+        return
+      }
+      const tag = isCode ? 'code' : 'p'
+      logs.innerHTML = `${logs.innerHTML}<${tag}>${s}</${tag}>`
+    }
+    const writeCollapsible = (summary, details) => {
+      const sum = `<summary>${summary}</summary>`
+      logs.innerHTML = `${logs.innerHTML}<details>${sum}<pre>${details}</pre></details>`
+    }
+
+    const lock = new Auth0Lock("%client_id%", "%tenant%", __GEN_SNIPPET_lockOptions)
+
+    const onError = (err) => {
+      console.error('Error!')
+      console.log(err)
+      write('Error parsing hash')
+      write(JSON.stringify(err), true)
+      return
+    }
+
+    const onAuthenticated = (data) => {
+      console.log('success!')
+      console.log(data)
+      write('Login successful')
+      writeAuthResult(data)
+    }
+
+    lock.on('authenticated', onAuthenticated)
+    lock.on('authorization_error', onError)
+    lock.on('unrecoverable_error', onError)
+
+    window.login = function() {
+      lock.show(__GEN_SNIPPET_lockShow)
+    }
+
+    window.check = function() {
+      lock.checkSession(__GEN_SNIPPET_checkSession, (err, authResult) => {
+        if (err) {
+          return onError(err)
+        }
+        onAuthenticated(authResult)
+      })
+    }
+
+    window.logout = function() {
+      lock.logout(__GEN_SNIPPET_logout)
+    }
+
+    const writeAuthResult = data => {
+      const idtp = data.idTokenPayload
+      const at = data.accessToken
+
+      write('ID token:')
+      write(data.idToken, true)
+      write('ID token payload:')
+      writeCollapsible(JSON.stringify(idtp), JSON.stringify(idtp, 0, 4))
+      write('Access token:')
+      write(at, true)
+      if (at.startsWith('eyJ')) {
+        const atp = JSON.parse(atob(at.split('.')[1]))
+        write('Access token payload:')
+        writeCollapsible(JSON.stringify(atp), JSON.stringify(atp, 0, 4))
+      }
+      write('---')
+    }
+
+  </script>
+
+</body>
+</html>
