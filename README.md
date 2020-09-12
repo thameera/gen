@@ -3,6 +3,8 @@
 ## Initial setup
 
 ```
+cp lib/tenantData.example.js lib/tenants.js
+# Now populate the above file with valid data
 npm i
 ```
 
