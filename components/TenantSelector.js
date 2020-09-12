@@ -6,7 +6,10 @@ import {
   Select,
   makeStyles,
   FormHelperText,
+  Box,
+  Button,
 } from '@material-ui/core'
+import axios from 'axios'
 
 const useStyles = makeStyles(() => ({
   formControl: {
@@ -51,6 +54,16 @@ export default function TenantSelector({ onUpdate }) {
   const onTenantChange = (e) => {
     const t = tenantMgr.getTenantByLabel(e.target.value)
     setSelectedTenant(t)
+  }
+
+  const getPwChangeTicket = async () => {
+    const res = await axios('/api/mgmt/pw-change-ticket')
+    if (res.data.error) {
+      // TODO handle error
+      console.log(res.data)
+      return
+    }
+    window.open(res.data.ticket, '_blank')
   }
 
   return (
@@ -103,6 +116,12 @@ export default function TenantSelector({ onUpdate }) {
           </a>
         </FormHelperText>
       </FormControl>
+
+      <Box>
+        <Button variant="contained" color="primary" onClick={getPwChangeTicket}>
+          Open a Password Change ticket
+        </Button>
+      </Box>
     </>
   )
 }
