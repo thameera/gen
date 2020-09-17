@@ -8,6 +8,10 @@ import {
   FormHelperText,
   Box,
   Button,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
 } from '@material-ui/core'
 import axios from 'axios'
 import CopyTokenButton from './CopyTokenButton'
@@ -20,6 +24,9 @@ const useStyles = makeStyles(() => ({
   helperLink: {
     color: '#88f',
   },
+  buttonRow: {
+    marginTop: '10px',
+  },
 }))
 
 export default function TenantSelector({ onUpdate }) {
@@ -29,6 +36,9 @@ export default function TenantSelector({ onUpdate }) {
   )
   const [tenantClients, setTenantClients] = useState([])
   const [selectedClientId, setSelectedClientId] = useState('')
+  const [selectedDomain, setSelectedDomain] = useState(
+    selectedTenant.domains[0]
+  )
 
   const classes = useStyles()
 
@@ -39,6 +49,7 @@ export default function TenantSelector({ onUpdate }) {
     const clients = tenantMgr.getClientsByTenant(selectedTenant.label)
     setTenantClients(clients)
     setSelectedClientId(clients[0].client_id)
+    setSelectedDomain(selectedTenant.domains[0])
     console.log(selectedTenant)
   }, [selectedTenant])
 
@@ -47,10 +58,10 @@ export default function TenantSelector({ onUpdate }) {
    */
   useEffect(() => {
     onUpdate({
-      tenantDomain: selectedTenant.domains[0],
+      tenantDomain: selectedDomain,
       client_id: selectedClientId,
     })
-  }, [selectedTenant, selectedClientId])
+  }, [selectedDomain, selectedClientId])
 
   const onTenantChange = (e) => {
     const t = tenantMgr.getTenantByLabel(e.target.value)
@@ -118,7 +129,28 @@ export default function TenantSelector({ onUpdate }) {
         </FormHelperText>
       </FormControl>
 
-      <Box>
+      {selectedTenant.domains.length === 2 && (
+        <FormControl component="fieldset">
+          <FormLabel component="legend">Domain</FormLabel>
+          <RadioGroup
+            value={selectedDomain}
+            onChange={(e) => setSelectedDomain(e.target.value)}
+          >
+            <FormControlLabel
+              value={selectedTenant.domains[0]}
+              control={<Radio />}
+              label={selectedTenant.domains[0]}
+            />
+            <FormControlLabel
+              value={selectedTenant.domains[1]}
+              control={<Radio />}
+              label={selectedTenant.domains[1]}
+            />
+          </RadioGroup>
+        </FormControl>
+      )}
+
+      <Box className={classes.buttonRow}>
         <CopyTokenButton tenantLabel={selectedTenant.label} />
         <Button variant="contained" color="primary" onClick={getPwChangeTicket}>
           Open a Password Change ticket
