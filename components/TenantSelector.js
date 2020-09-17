@@ -10,6 +10,7 @@ import {
   Button,
 } from '@material-ui/core'
 import axios from 'axios'
+import CopyTokenButton from './CopyTokenButton'
 
 const useStyles = makeStyles(() => ({
   formControl: {
@@ -118,6 +119,7 @@ export default function TenantSelector({ onUpdate }) {
       </FormControl>
 
       <Box>
+        <CopyTokenButton tenantLabel={selectedTenant.label} />
         <Button variant="contained" color="primary" onClick={getPwChangeTicket}>
           Open a Password Change ticket
         </Button>

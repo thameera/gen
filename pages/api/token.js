@@ -1,9 +1,14 @@
 import * as tenantMgr from '../../lib/tenants'
 
 export default async (req, res) => {
+  if (!req.query || !req.query.tenant) {
+    res.statusCode = 400
+    res.end('No tenant specified')
+    return
+  }
+
   try {
-    // TODO set tenant label dynamically from request
-    const token = await tenantMgr.getAPI2Token('tham@us')
+    const token = await tenantMgr.getAPI2Token(req.query.tenant)
     res.json({ token })
   } catch (e) {
     res.statusCode = 400
