@@ -1,4 +1,4 @@
-import * as tenantMgr from '../../lib/tenants'
+import * as mgmtApi from '../../lib/mgmtApi'
 
 export default async (req, res) => {
   if (!req.query || !req.query.tenant) {
@@ -8,7 +8,7 @@ export default async (req, res) => {
   }
 
   try {
-    const token = await tenantMgr.getAPI2Token(req.query.tenant)
+    const token = await mgmtApi.getAPI2Token(req.query.tenant)
     res.json({ token })
   } catch (e) {
     res.statusCode = 400

@@ -64,7 +64,7 @@ export default function TenantSelector({ onUpdate }) {
   }, [selectedDomain, selectedClientId])
 
   const onTenantChange = (e) => {
-    const t = tenantMgr.getTenantByLabel(e.target.value)
+    const t = tenantMgr.getTenantByLabelForFrontend(e.target.value)
     setSelectedTenant(t)
   }
 
