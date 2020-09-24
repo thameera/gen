@@ -58,10 +58,11 @@ export default function TenantSelector({ onUpdate }) {
    */
   useEffect(() => {
     onUpdate({
+      tenantLabel: selectedTenant.label,
       tenantDomain: selectedDomain,
       client_id: selectedClientId,
     })
-  }, [selectedDomain, selectedClientId])
+  }, [selectedTenant, selectedDomain, selectedClientId])
 
   const onTenantChange = (e) => {
     const t = tenantMgr.getTenantByLabelForFrontend(e.target.value)

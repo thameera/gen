@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <script src="https://cdn.auth0.com/js/auth0-spa-js/1.11/auth0-spa-js.production.js"></script>
+  <script src="https://cdn.auth0.com/js/auth0-spa-js/1.12/auth0-spa-js.production.js"></script>
 
   <title>auth0 spa js</title>
 
@@ -60,7 +60,7 @@
     let auth0
 
     const init = async () => {
-      auth0 = await createAuth0Client(__GEN_SNIPPET_constructor)
+      auth0 = new Auth0Client(__GEN_SNIPPET_constructor)
 
       document.getElementById('loading').classList.add('hidden')
       document.getElementById('buttons').classList.remove('hidden')
