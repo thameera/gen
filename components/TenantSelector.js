@@ -15,6 +15,7 @@ import {
 } from '@material-ui/core'
 import axios from 'axios'
 import CopyTokenButton from './CopyTokenButton'
+import ULPDialogButton from './dialogs/ULPDialogButton'
 
 const useStyles = makeStyles(() => ({
   formControl: {
@@ -150,6 +151,8 @@ export default function TenantSelector({ onUpdate }) {
           </RadioGroup>
         </FormControl>
       )}
+
+      <ULPDialogButton tenantLabel={selectedTenant.label} />
 
       <Box className={classes.buttonRow}>
         <CopyTokenButton tenantLabel={selectedTenant.label} />
