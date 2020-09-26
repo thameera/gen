@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script src="https://cdn.auth0.com/js/auth0/9.14.0/auth0.min.js"></script>
+
+  <title>Auth0.js embedded login</title>
+</head>
+<body>
+  <a id="homeurl" href="#">Home</a>
+  <h2>%strategy_name%</h2>
+  <form>
+    <div>
+      <label for="email">Email: </label>
+      <input type="text" name="email" id="email" required>
+    </div>
+    <div>
+      <label for="password">Email: </label>
+      <input type="password" name="password" id="password" required>
+    </div>
+    <div>
+      <input type="submit" value="Login">
+    </div>
+  </form>
+  <div>
+    <button type="button" onclick="check()">Check Session</button>
+    <button type="button" onclick="logout()">Logout</button>
+  </div>
+  <hr>
+  <div id="logs"></div>
+
+  <script>
+    const URL = window.location.href.split('#')[0].split('?')[0]
+    document.querySelector('a#homeurl').href = URL
+    const logs = document.querySelector('#logs')
+    const write = (s, isCode) => {
+      if (s === '---') {
+        logs.innerHTML = `${logs.innerHTML}<hr>`
+        return
+      }
+      const tag = isCode ? 'code' : 'p'
+      logs.innerHTML = `${logs.innerHTML}<${tag}>${s}</${tag}>`
+    }
+    const writeCollapsible = (summary, details) => {
+      const sum = `<summary>${summary}</summary>`
+      logs.innerHTML = `${logs.innerHTML}<details>${sum}<pre>${details}</pre></details>`
+    }
+
+    var webAuth = new auth0.WebAuth(__GEN_SNIPPET_constructor)
+
+    webAuth.parseHash(function(err, data) {
+      if (err) {
+        console.error('Error!')
+        console.log(err)
+        write('Error parsing hash')
+        write(JSON.stringify(err), true)
+        return
+      }
+
+      if (data) {
+        console.log('success!')
+        console.log(data)
+        write('Login successful')
+        writeAuthResult(data)
+      }
+    })
+
+    document.querySelector('form').addEventListener('submit', ev => {
+      ev.preventDefault()
+      const username = document.querySelector('#email').value
+      const password = document.querySelector('#password').value
+      webAuth.login(Object.assign({username, password}, __GEN_SNIPPET_login))
+      return false
+    })
+
+    window.check = function() {
+      webAuth.checkSession(__GEN_SNIPPET_checkSession, (err, authResult) => {
+        if (err) {
+          console.log('err!')
+          console.log(err)
+          write('Error checking session')
+          write(JSON.stringify(err), true)
+          return
+        }
+        console.log( authResult)
+        write('\nRenew successful')
+        writeAuthResult(authResult)
+      })
+    }
+
+    window.logout = function() {
+      webAuth.logout(__GEN_SNIPPET_logout)
+    }
+
+    const writeAuthResult = data => {
+      const idtp = data.idTokenPayload
+      const at = data.accessToken
+
+      write('ID token:')
+      write(data.idToken, true)
+      write('ID token payload:')
+      writeCollapsible(JSON.stringify(idtp), JSON.stringify(idtp, 0, 4))
+      write('Access token:')
+      write(at, true)
+      if (at.startsWith('eyJ')) {
+        const atp = JSON.parse(atob(at.split('.')[1]))
+        write('Access token payload:')
+        writeCollapsible(JSON.stringify(atp), JSON.stringify(atp, 0, 4))
+      }
+      write('---')
+    }
+
+  </script>
+
+</body>
+</html>
