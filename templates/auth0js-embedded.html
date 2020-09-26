@@ -69,7 +69,12 @@
       ev.preventDefault()
       const username = document.querySelector('#email').value
       const password = document.querySelector('#password').value
-      webAuth.login(Object.assign({username, password}, __GEN_SNIPPET_login))
+      webAuth.login(Object.assign({username, password}, __GEN_SNIPPET_login), (err) => {
+        console.log('err!')
+        console.log(err)
+        write('Error logging in')
+        write(JSON.stringify(err), true)
+      })
       return false
     })
 
