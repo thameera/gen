@@ -71,7 +71,18 @@
     }
 
     window.check = function() {
-      auth0.checkSession(__GEN_SNIPPET_checkSession)
+      auth0.checkSession(__GEN_SNIPPET_checkSession, (err, authResult) => {
+        if (err) {
+          console.log('err!')
+          console.log(err)
+          write('Error checking session')
+          write(JSON.stringify(err), true)
+          return
+        }
+        console.log( authResult)
+        write('\nRenew successful')
+        writeAuthResult(authResult)
+      })
     }
 
     window.logout = function() {
