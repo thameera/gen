@@ -5,6 +5,10 @@
 ```
 cp lib/tenantData.example.js lib/tenants.js
 # Now populate the above file with valid data
+
+cp .env.local.example .env.local
+# Now update the env vars in .env.local if necessary
+
 npm i
 ```
 

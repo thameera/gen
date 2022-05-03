@@ -2,8 +2,10 @@ import fs from 'fs'
 import * as strategies from '../../lib/strategies'
 import * as mgmtApi from '../../lib/mgmtApi'
 
-const DEST_PATH = '/Users/thameerasenanayaka/auth0/ws/tham'
-const LOCAL_DOMAIN = 'http://tham.localhost'
+// Path where output html files should be written to
+const DEST_PATH = process.env.DEST_PATH
+// Domain which serves the generated html files - can be something like http://localhost:3000 or a custom one like http://tham.localhost
+const LOCAL_DOMAIN = process.env.LOCAL_DOMAIN
 
 const updateClientURLs = async (tenantLabel, clientID, url) => {
   const client = await mgmtApi.getClient(tenantLabel, clientID)
