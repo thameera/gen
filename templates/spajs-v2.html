@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <script src="https://cdn.auth0.com/js/auth0-spa-js/1.12/auth0-spa-js.production.js"></script>
+  <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
 
-  <title>auth0 spa js</title>
+  <title>auth0 spa js v2</title>
 
 <style>
 .hidden { display: none; }
@@ -44,13 +44,13 @@
       logs.innerHTML = `${logs.innerHTML}<details>${sum}<pre>${details}</pre></details>`
     }
 
-    let auth0
+    let webAuth
 
-    /* 
+    /*
      * Init SDK
      */
     const init = async () => {
-      auth0 = new Auth0Client(__GEN_SNIPPET_constructor)
+      webAuth = new auth0.Auth0Client(__GEN_SNIPPET_constructor)
 
       document.getElementById('loading').classList.add('hidden')
       document.getElementById('buttons').classList.remove('hidden')
@@ -58,9 +58,10 @@
       const query = window.location.search;
       if (query.includes('state=')) {
         try {
-          await auth0.handleRedirectCallback()
+          await webAuth.handleRedirectCallback()
           writeAuthDetails()
         } catch (e) {
+          console.log( e)
           if (e.message === 'Invalid state') {
             write('State mismatch. Try logging in again.')
           } else {
@@ -71,20 +72,20 @@
     }
 
     const writeAuthDetails = async () => {
-      const authenticated = await auth0.isAuthenticated()
+      const authenticated = await webAuth.isAuthenticated()
       if (!authenticated) {
         write('<strong>Login failed</strong>')
         return
       }
 
       write('<strong>Login successful</strong>')
-      //const user = await auth0.getUser()
+      //const user = await webAuth.getUser()
 
-      const claims = await auth0.getIdTokenClaims()
+      const claims = await webAuth.getIdTokenClaims()
       write('ID token claims:')
       writeCollapsible(JSON.stringify(claims), JSON.stringify(claims, 0, 4))
 
-      const at = await auth0.getTokenSilently()
+      const at = await webAuth.getTokenSilently()
       write('Access token:')
       write(at, true)
 
@@ -105,12 +106,12 @@
     }
 
     window.loginRedirect = async () => {
-      await auth0.loginWithRedirect(__GEN_SNIPPET_loginWithRedirect)
+      await webAuth.loginWithRedirect(__GEN_SNIPPET_loginWithRedirect)
     }
 
     window.loginPopup = async () => {
       try {
-        await auth0.loginWithPopup(__GEN_SNIPPET_loginWithPopup)
+        await webAuth.loginWithPopup(__GEN_SNIPPET_loginWithPopup)
       } catch (e) {
         writeError(e)
         return
@@ -120,7 +121,7 @@
 
     window.check = async () => {
       try {
-        await auth0.getTokenSilently(__GEN_SNIPPET_getTokenSilently)
+        await webAuth.getTokenSilently(__GEN_SNIPPET_getTokenSilently)
         writeAuthDetails()
       } catch (e) {
         writeError(e)
@@ -129,7 +130,7 @@
     }
 
     window.logout = async () => {
-      auth0.logout(__GEN_SNIPPET_logout)
+      webAuth.logout(__GEN_SNIPPET_logout)
     }
 
     window.onload = init
