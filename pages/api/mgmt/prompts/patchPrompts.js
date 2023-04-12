@@ -16,9 +16,18 @@ export default async (req, res) => {
     res.end('No ULP experience specified')
     return
   }
+  if (
+    req.body.custom_login_page_on === null ||
+    req.body.custom_login_page_on === undefined
+  ) {
+    res.statusCode = 400
+    res.end('No custom login page status specified')
+    return
+  }
 
   const data = {
     universal_login_experience: req.body.universal_login_experience,
+    custom_login_page_on: req.body.custom_login_page_on,
   }
 
   try {

@@ -10,6 +10,7 @@ import {
   FormControlLabel,
   Radio,
   DialogActions,
+  Switch,
 } from '@material-ui/core'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
@@ -18,6 +19,7 @@ export default function ULPDialogButton({ tenantLabel }) {
   const [open, setOpen] = useState(false)
   const [status, setStatus] = useState('')
   const [experience, setExperience] = useState('')
+  const [isCustomPage, setIsCustomPage] = useState(false)
 
   useEffect(() => {
     if (status !== 'Updated!') {
@@ -37,6 +39,7 @@ export default function ULPDialogButton({ tenantLabel }) {
       )
       console.log(res.data)
       setExperience(res.data.universal_login_experience)
+      setIsCustomPage(res.data.custom_login_page_on)
       setStatus('')
     } catch (e) {
       console.log(e)
@@ -56,6 +59,7 @@ export default function ULPDialogButton({ tenantLabel }) {
       await axios.post('/api/mgmt/prompts/patchPrompts', {
         tenantLabel,
         universal_login_experience: experience,
+        custom_login_page_on: isCustomPage,
       })
       setStatus('Updated!')
     } catch (e) {
@@ -70,20 +74,39 @@ export default function ULPDialogButton({ tenantLabel }) {
         <DialogTitle>ULP Settings</DialogTitle>
         <DialogContent>
           {experience && (
-            <FormControl component="fieldset">
-              <FormLabel component="legend">ULP Experience</FormLabel>
-              <RadioGroup
-                value={experience}
-                onChange={(e) => setExperience(e.target.value)}
-              >
+            <>
+              <div>
+                <FormControl component="fieldset">
+                  <FormLabel component="legend">ULP Experience</FormLabel>
+                  <RadioGroup
+                    value={experience}
+                    onChange={(e) => setExperience(e.target.value)}
+                  >
+                    <FormControlLabel
+                      value="classic"
+                      control={<Radio />}
+                      label="Classic"
+                    />
+                    <FormControlLabel
+                      value="new"
+                      control={<Radio />}
+                      label="New"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </div>
+              <div>
                 <FormControlLabel
-                  value="classic"
-                  control={<Radio />}
-                  label="Classic"
+                  control={
+                    <Switch
+                      checked={isCustomPage}
+                      onChange={(e) => setIsCustomPage(e.target.checked)}
+                    />
+                  }
+                  label="Custom Login Page"
                 />
-                <FormControlLabel value="new" control={<Radio />} label="New" />
-              </RadioGroup>
-            </FormControl>
+              </div>
+            </>
           )}
           {status && <DialogContentText>{status}</DialogContentText>}
         </DialogContent>
