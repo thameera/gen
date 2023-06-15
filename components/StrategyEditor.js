@@ -15,6 +15,14 @@ import {
 const useStyles = makeStyles({
   textarea: {
     width: '100%',
+    marginTop: '5px',
+  },
+  snippetName: {
+    marginTop: '10px',
+    fontWeight: 'bold',
+  },
+  snippetHint: {
+    fontSize: '0.8em',
   },
 })
 
@@ -32,6 +40,7 @@ export default function StrategyEditor({ onUpdate }) {
       .getDefaultSnippets(strategyName)
       .map((sn) => ({
         name: sn.name,
+        hint: sn.hint,
         value: JSON.stringify(sn.value, 0, 2),
       }))
     setSnippets(stringifiedSnippets)
@@ -83,14 +92,16 @@ export default function StrategyEditor({ onUpdate }) {
     }
 
     const onChange = (e) => {
-      onUpdateSnippet({ name: snippet.name, value: e.target.value }, idx)
+      const newSnippet = { ...snippet, value: e.target.value }
+      onUpdateSnippet(newSnippet, idx)
     }
 
     return (
       <GridListTile key={idx}>
-        <p>
-          <strong>{snippet.name}</strong>
-        </p>
+        <div className={classes.snippetName}>{snippet.name}</div>
+        {snippet.hint && (
+          <div className={classes.snippetHint}>{snippet.hint}</div>
+        )}
         <TextareaAutosize
           className={classes.textarea}
           value={val}

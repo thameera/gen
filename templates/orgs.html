@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script src="https://cdn.auth0.com/js/auth0/9.21.0/auth0.min.js"></script>
+
+  <title>Auth0.js Orgs</title>
+</head>
+<body>
+  <a id="homeurl" href="#">Home</a>
+  <h2>%strategy_name%</h2>
+
+  <div style="margin-bottom: 5px;">
+    <label for="org_id">Org ID: </label>
+    <input type="text" name="org_id" id="org_id" size="30" onclick="this.select()">
+  </div>
+  <div>
+    <button type="button" onclick="login()">Authorize</button>
+    <button type="button" onclick="check()">Check Session</button>
+    <button type="button" onclick="logout()">Logout</button>
+  </div>
+  <hr>
+
+  <div style="margin-bottom: 5px;">
+    <label for="invite_url">Invite URL: </label>
+    <input type="text" name="invite_url" id="invite_url" size="150" onclick="this.select()">
+  </div>
+  <div>
+    <button type="button" onclick="inviteflow()">Start invite flow</button>
+  </div>
+  <hr>
+
+  <div id="logs"></div>
+
+  <script>
+    const URL = window.location.href.split('#')[0].split('?')[0]
+    document.querySelector('a#homeurl').href = URL
+    const logs = document.querySelector('#logs')
+    const write = (s, isCode) => {
+      if (s === '---') {
+        logs.innerHTML = `${logs.innerHTML}<hr>`
+        return
+      }
+      const tag = isCode ? 'code' : 'p'
+      logs.innerHTML = `${logs.innerHTML}<${tag}>${s}</${tag}>`
+    }
+    const writeCollapsible = (summary, details) => {
+      const sum = `<summary>${summary}</summary>`
+      logs.innerHTML = `${logs.innerHTML}<details>${sum}<pre>${details}</pre></details>`
+    }
+
+    let org_id
+
+    var auth0 = new auth0.WebAuth(__GEN_SNIPPET_constructor)
+
+    auth0.parseHash(function(err, data) {
+      if (err) {
+        console.error('Error!')
+        console.log(err)
+        write('Error parsing hash')
+        write(JSON.stringify(err), true)
+        return
+      }
+
+      if (data) {
+        console.log('success!')
+        console.log(data)
+        write('Login successful')
+        writeAuthResult(data)
+      }
+    })
+
+    window.login = function() {
+      const opts = __GEN_SNIPPET_authorize
+      if (org_id) {
+        opts.organization = org_id
+      }
+      auth0.authorize(opts)
+    }
+
+    window.check = function() {
+      const opts = __GEN_SNIPPET_checkSession
+      if (org_id) {
+        opts.organization = org_id
+      }
+      auth0.checkSession(opts, (err, authResult) => {
+        if (err) {
+          console.log('err!')
+          console.log(err)
+          write('Error checking session')
+          write(JSON.stringify(err), true)
+          return
+        }
+        console.log( authResult)
+        write('\nRenew successful')
+        writeAuthResult(authResult)
+      })
+    }
+
+    window.logout = function() {
+      auth0.logout(__GEN_SNIPPET_logout)
+    }
+
+    window.inviteflow = () => {
+      const invite = document.querySelector('#invite_url').value
+      if (!invite) {
+        write('Invite URL not specified')
+        return
+      }
+
+      const url = new window.URL(invite)
+      const params = new URLSearchParams(url.search)
+
+      const opts = __GEN_SNIPPET_inviteAuthorize
+      opts.organization = params.get('organization')
+      opts.invitation = params.get('invitation')
+
+      auth0.authorize(opts)
+    }
+
+    const writeAuthResult = data => {
+      const idtp = data.idTokenPayload
+      const at = data.accessToken
+
+      write('ID token:')
+      write(data.idToken, true)
+      write('ID token payload:')
+      writeCollapsible(JSON.stringify(idtp), JSON.stringify(idtp, 0, 4))
+      write('Access token:')
+      write(at, true)
+      if (at.startsWith('eyJ')) {
+        const atp = JSON.parse(atob(at.split('.')[1]))
+        write('Access token payload:')
+        writeCollapsible(JSON.stringify(atp), JSON.stringify(atp, 0, 4))
+      }
+      write('---')
+    }
+
+    const org_textbox = document.querySelector('#org_id')
+
+    // Update local storage when org_id changes
+    org_textbox.addEventListener('input', (event) => {
+      org_id = event.target.value
+      localStorage.setItem('org_id', org_id)
+    })
+
+    // Set org_id from local storage on page load
+    window.onload = () => {
+      org_id = localStorage.getItem('org_id')
+      if (org_id) {
+        org_textbox.value = org_id
+      }
+    }
+
+  </script>
+
+</body>
+</html>
