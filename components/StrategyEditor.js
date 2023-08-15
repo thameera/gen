@@ -2,8 +2,8 @@ import * as strategies from '../lib/strategies'
 import { useState, useEffect } from 'react'
 import {
   TextareaAutosize,
-  GridList,
-  GridListTile,
+  ImageList,
+  ImageListItem,
   makeStyles,
   FormControl,
   FormLabel,
@@ -97,7 +97,7 @@ export default function StrategyEditor({ onUpdate }) {
     }
 
     return (
-      <GridListTile key={idx}>
+      <ImageListItem key={idx}>
         <div className={classes.snippetName}>{snippet.name}</div>
         {snippet.hint && (
           <div className={classes.snippetHint}>{snippet.hint}</div>
@@ -107,16 +107,16 @@ export default function StrategyEditor({ onUpdate }) {
           value={val}
           onChange={onChange}
         />
-      </GridListTile>
+      </ImageListItem>
     )
   }
 
   return (
     <>
       {renderStrategyList()}
-      <GridList cols={3} cellHeight="auto">
+      <ImageList cols={3} rowHeight="auto">
         {snippets.map(renderSnippet)}
-      </GridList>
+      </ImageList>
     </>
   )
 }
