@@ -6,6 +6,7 @@ import {
   Button,
   FormControl,
   FormLabel,
+  Grid,
   RadioGroup,
   FormControlLabel,
   Radio,
@@ -107,66 +108,75 @@ export default function ULPDialogButton({ tenantLabel }) {
 
   return (
     <>
-      <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth={true}>
+      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth={true}>
         <DialogTitle>ULP Settings</DialogTitle>
         <DialogContent>
           {experience && (
             <>
-              <div>
-                <FormControl component="fieldset">
-                  <FormLabel component="legend">ULP Experience</FormLabel>
-                  <RadioGroup
-                    value={experience}
-                    onChange={(e) => setExperience(e.target.value)}
-                  >
+              <Grid container spacing={2}>
+                <Grid item xs={5}>
+                  <div>
+                    <FormControl component="fieldset">
+                      <FormLabel component="legend">ULP Experience</FormLabel>
+                      <RadioGroup
+                        value={experience}
+                        onChange={(e) => setExperience(e.target.value)}
+                      >
+                        <FormControlLabel
+                          value="classic"
+                          control={<Radio />}
+                          label="Classic"
+                        />
+                        <FormControlLabel
+                          value="new"
+                          control={<Radio />}
+                          label="New"
+                        />
+                      </RadioGroup>
+                    </FormControl>
+                  </div>
+                  <div>
                     <FormControlLabel
-                      value="classic"
-                      control={<Radio />}
-                      label="Classic"
+                      control={
+                        <Switch
+                          checked={isCustomPage}
+                          onChange={(e) => setIsCustomPage(e.target.checked)}
+                        />
+                      }
+                      label="Custom Login Page"
                     />
-                    <FormControlLabel
-                      value="new"
-                      control={<Radio />}
-                      label="New"
-                    />
-                  </RadioGroup>
-                </FormControl>
-              </div>
-              <div>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={isCustomPage}
-                      onChange={(e) => setIsCustomPage(e.target.checked)}
-                    />
-                  }
-                  label="Custom Login Page"
-                />
-              </div>
-              <div>
-                <FormControl component="fieldset">
-                  <FormLabel component="legend">
-                    Authentication Profile
-                  </FormLabel>
-                  <RadioGroup value={authProfile} onChange={updateAuthProfile}>
-                    <FormControlLabel
-                      value="none"
-                      control={<Radio />}
-                      label="Identifier + Password"
-                    />
-                    <FormControlLabel
-                      value="id_first"
-                      control={<Radio />}
-                      label="Identifier First"
-                    />
-                    <FormControlLabel
-                      value="webauthn"
-                      control={<Radio />}
-                      label="Identifier First + Biometrics"
-                    />
-                  </RadioGroup>
-                </FormControl>
-              </div>
+                  </div>
+                </Grid>
+                <Grid item xs={5}>
+                  <div>
+                    <FormControl component="fieldset">
+                      <FormLabel component="legend">
+                        Authentication Profile
+                      </FormLabel>
+                      <RadioGroup
+                        value={authProfile}
+                        onChange={updateAuthProfile}
+                      >
+                        <FormControlLabel
+                          value="none"
+                          control={<Radio />}
+                          label="Identifier + Password"
+                        />
+                        <FormControlLabel
+                          value="id_first"
+                          control={<Radio />}
+                          label="Identifier First"
+                        />
+                        <FormControlLabel
+                          value="webauthn"
+                          control={<Radio />}
+                          label="ID First + Biometrics"
+                        />
+                      </RadioGroup>
+                    </FormControl>
+                  </div>
+                </Grid>
+              </Grid>
             </>
           )}
           {status && <DialogContentText>{status}</DialogContentText>}
