@@ -28,6 +28,8 @@ export default async (req, res) => {
   const data = {
     universal_login_experience: req.body.universal_login_experience,
     custom_login_page_on: req.body.custom_login_page_on,
+    identifier_first: req.body.identifier_first,
+    webauthn_platform_first_factor: req.body.webauthn_platform_first_factor,
   }
 
   try {

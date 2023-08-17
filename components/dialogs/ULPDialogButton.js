@@ -20,6 +20,9 @@ export default function ULPDialogButton({ tenantLabel }) {
   const [status, setStatus] = useState('')
   const [experience, setExperience] = useState('')
   const [isCustomPage, setIsCustomPage] = useState(false)
+  const [isIdFirst, setIsIdFirst] = useState(false)
+  const [isWebauthnFirstFactor, setIsWebauthnFirstFactor] = useState(false)
+  const [authProfile, setAuthProfile] = useState('')
 
   useEffect(() => {
     if (status !== 'Updated!') {
@@ -29,6 +32,32 @@ export default function ULPDialogButton({ tenantLabel }) {
       setStatus('')
     }, 1000)
   }, [status])
+
+  const updateAuthProfile = (ev) => {
+    const profile = ev.target.value
+    setAuthProfile(profile)
+
+    if (profile === 'none') {
+      setIsIdFirst(false)
+      setIsWebauthnFirstFactor(false)
+    } else if (profile === 'id_first') {
+      setIsIdFirst(true)
+      setIsWebauthnFirstFactor(false)
+    } else {
+      setIsIdFirst(true)
+      setIsWebauthnFirstFactor(true)
+    }
+  }
+
+  const setInitialAuthProfileValue = (id_first, webauthn) => {
+    if (!id_first) {
+      setAuthProfile('none')
+    } else if (id_first && !webauthn) {
+      setAuthProfile('id_first')
+    } else {
+      setAuthProfile('webauthn')
+    }
+  }
 
   const handleClickOpen = async () => {
     setOpen(true)
@@ -40,6 +69,12 @@ export default function ULPDialogButton({ tenantLabel }) {
       console.log(res.data)
       setExperience(res.data.universal_login_experience)
       setIsCustomPage(res.data.custom_login_page_on)
+      setIsIdFirst(res.data.identifier_first)
+      setIsWebauthnFirstFactor(res.data.webauthn_platform_first_factor)
+      setInitialAuthProfileValue(
+        res.data.identifier_first,
+        res.data.webauthn_platform_first_factor
+      )
       setStatus('')
     } catch (e) {
       console.log(e)
@@ -60,6 +95,8 @@ export default function ULPDialogButton({ tenantLabel }) {
         tenantLabel,
         universal_login_experience: experience,
         custom_login_page_on: isCustomPage,
+        identifier_first: isIdFirst,
+        webauthn_platform_first_factor: isWebauthnFirstFactor,
       })
       setStatus('Updated!')
     } catch (e) {
@@ -105,6 +142,30 @@ export default function ULPDialogButton({ tenantLabel }) {
                   }
                   label="Custom Login Page"
                 />
+              </div>
+              <div>
+                <FormControl component="fieldset">
+                  <FormLabel component="legend">
+                    Authentication Profile
+                  </FormLabel>
+                  <RadioGroup value={authProfile} onChange={updateAuthProfile}>
+                    <FormControlLabel
+                      value="none"
+                      control={<Radio />}
+                      label="Identifier + Password"
+                    />
+                    <FormControlLabel
+                      value="id_first"
+                      control={<Radio />}
+                      label="Identifier First"
+                    />
+                    <FormControlLabel
+                      value="webauthn"
+                      control={<Radio />}
+                      label="Identifier First + Biometrics"
+                    />
+                  </RadioGroup>
+                </FormControl>
               </div>
             </>
           )}
