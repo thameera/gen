@@ -19,6 +19,7 @@ import axios from 'axios'
 export default function ULPDialogButton({ tenantLabel }) {
   const [open, setOpen] = useState(false)
   const [status, setStatus] = useState('')
+  const [currentTenant, setCurrentTenant] = useState('')
   const [experience, setExperience] = useState('')
   const [isCustomPage, setIsCustomPage] = useState(false)
   const [isIdFirst, setIsIdFirst] = useState(false)
@@ -33,6 +34,31 @@ export default function ULPDialogButton({ tenantLabel }) {
       setStatus('')
     }, 1000)
   }, [status])
+
+  const fetchULPSettings = async () => {
+    setStatus('Fetching...')
+
+    try {
+      const res = await axios(
+        `/api/mgmt/prompts/getPrompts?tenant=${tenantLabel}`
+      )
+      console.log(res.data)
+
+      setCurrentTenant(tenantLabel)
+      setExperience(res.data.universal_login_experience)
+      setIsCustomPage(res.data.custom_login_page_on)
+      setIsIdFirst(res.data.identifier_first)
+      setIsWebauthnFirstFactor(res.data.webauthn_platform_first_factor)
+      setInitialAuthProfileValue(
+        res.data.identifier_first,
+        res.data.webauthn_platform_first_factor
+      )
+      setStatus('')
+    } catch (e) {
+      console.log(e)
+      setStatus('Error fetching ULP Settings')
+    }
+  }
 
   const updateAuthProfile = (ev) => {
     const profile = ev.target.value
@@ -62,30 +88,16 @@ export default function ULPDialogButton({ tenantLabel }) {
 
   const handleClickOpen = async () => {
     setOpen(true)
-    setStatus('Fetching...')
-    try {
-      const res = await axios(
-        `/api/mgmt/prompts/getPrompts?tenant=${tenantLabel}`
-      )
-      console.log(res.data)
-      setExperience(res.data.universal_login_experience)
-      setIsCustomPage(res.data.custom_login_page_on)
-      setIsIdFirst(res.data.identifier_first)
-      setIsWebauthnFirstFactor(res.data.webauthn_platform_first_factor)
-      setInitialAuthProfileValue(
-        res.data.identifier_first,
-        res.data.webauthn_platform_first_factor
-      )
-      setStatus('')
-    } catch (e) {
-      console.log(e)
-      setStatus('Error fetching ULP Settings')
+
+    // Fetch ULP settings if tenant has changed or if we don't have the settings yet
+    if (!experience || currentTenant !== tenantLabel) {
+      setExperience('') // We unset this so the UI doesn't show prev vals while fetching
+      await fetchULPSettings()
     }
   }
 
   const handleClose = () => {
     setOpen(false)
-    setExperience('')
     setStatus('')
   }
 
