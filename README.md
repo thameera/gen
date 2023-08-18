@@ -11,7 +11,7 @@ cp lib/tenantData.example.js lib/tenants.js
 # Now populate the above file with valid data
 
 cp .env.local.example .env.local
-# Now update the env vars in .env.local if necessary
+# Now update the env vars in .env.local if necessary. See Env vars section below.
 
 # Install dependencies
 npm install
@@ -45,3 +45,10 @@ npm run dev
 ```
 
 Visit http://gen in browser.
+
+## Environmen variables
+
+The following vars need to be set in `.env.local`.
+
+- `DEST_PATH` - Path to the directory where the output `tmp.html` files should be created.
+- `LOCAL_DOMAIN` - Local server domain from which the output files are served. Could be something like `http://localhost:3000` or `http://tham.localhost`. Used to automatically open the output file upon generating.
