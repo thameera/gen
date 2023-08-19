@@ -12,9 +12,11 @@ import {
   Radio,
   DialogActions,
   Switch,
+  IconButton,
 } from '@material-ui/core'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import RefreshIcon from '@material-ui/icons/Refresh'
 
 export default function ULPDialogButton({ tenantLabel }) {
   const [open, setOpen] = useState(false)
@@ -36,6 +38,7 @@ export default function ULPDialogButton({ tenantLabel }) {
   }, [status])
 
   const fetchULPSettings = async () => {
+    setExperience('') // We unset this so the UI doesn't show prev vals while fetching
     setStatus('Fetching...')
 
     try {
@@ -91,7 +94,6 @@ export default function ULPDialogButton({ tenantLabel }) {
 
     // Fetch ULP settings if tenant has changed or if we don't have the settings yet
     if (!experience || currentTenant !== tenantLabel) {
-      setExperience('') // We unset this so the UI doesn't show prev vals while fetching
       await fetchULPSettings()
     }
   }
@@ -194,6 +196,16 @@ export default function ULPDialogButton({ tenantLabel }) {
           {status && <DialogContentText>{status}</DialogContentText>}
         </DialogContent>
         <DialogActions>
+          {experience && (
+            <IconButton
+              color="primary"
+              aria-label="Refresh"
+              onClick={fetchULPSettings}
+            >
+              <RefreshIcon />
+            </IconButton>
+          )}
+          <div style={{ flex: '1 0 0' }} />
           <Button onClick={handleUpdate} color="primary">
             Update
           </Button>
@@ -202,6 +214,7 @@ export default function ULPDialogButton({ tenantLabel }) {
           </Button>
         </DialogActions>
       </Dialog>
+
       <Button variant="contained" color="primary" onClick={handleClickOpen}>
         ULP Settings
       </Button>
