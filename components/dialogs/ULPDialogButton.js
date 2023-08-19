@@ -28,6 +28,9 @@ export default function ULPDialogButton({ tenantLabel }) {
   const [isWebauthnFirstFactor, setIsWebauthnFirstFactor] = useState(false)
   const [authProfile, setAuthProfile] = useState('')
 
+  /*
+   * Reset the status message after a successful update, after a short delay
+   */
   useEffect(() => {
     if (status !== 'Updated!') {
       return
@@ -37,6 +40,9 @@ export default function ULPDialogButton({ tenantLabel }) {
     }, 1000)
   }, [status])
 
+  /*
+   * Fetch ULP settings for the current tenant
+   */
   const fetchULPSettings = async () => {
     setExperience('') // We unset this so the UI doesn't show prev vals while fetching
     setStatus('Fetching...')
@@ -63,6 +69,10 @@ export default function ULPDialogButton({ tenantLabel }) {
     }
   }
 
+  /*
+   * Update the state booleans based on the selected radio button
+   * Basically, handles the radio button -> state mapping
+   */
   const updateAuthProfile = (ev) => {
     const profile = ev.target.value
     setAuthProfile(profile)
@@ -79,6 +89,9 @@ export default function ULPDialogButton({ tenantLabel }) {
     }
   }
 
+  /*
+   * Handles the state -> radio button mapping
+   */
   const setInitialAuthProfileValue = (id_first, webauthn) => {
     if (!id_first) {
       setAuthProfile('none')
@@ -89,6 +102,9 @@ export default function ULPDialogButton({ tenantLabel }) {
     }
   }
 
+  /*
+   * Open dialog
+   */
   const handleClickOpen = async () => {
     setOpen(true)
 
@@ -98,11 +114,17 @@ export default function ULPDialogButton({ tenantLabel }) {
     }
   }
 
+  /*
+   * Close dialog
+   */
   const handleClose = () => {
     setOpen(false)
     setStatus('')
   }
 
+  /*
+   * 'Update' button handler. Sends PATCH reqs to tenant.
+   */
   const handleUpdate = async () => {
     setStatus('Updating...')
     try {
@@ -124,6 +146,7 @@ export default function ULPDialogButton({ tenantLabel }) {
     <>
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth={true}>
         <DialogTitle>ULP Settings</DialogTitle>
+
         <DialogContent>
           {experience && (
             <>
@@ -195,6 +218,7 @@ export default function ULPDialogButton({ tenantLabel }) {
           )}
           {status && <DialogContentText>{status}</DialogContentText>}
         </DialogContent>
+
         <DialogActions>
           {experience && (
             <IconButton
