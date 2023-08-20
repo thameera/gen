@@ -1,21 +1,13 @@
-import { Button, makeStyles } from '@material-ui/core'
+import { Button } from '@material-ui/core'
 import axios from 'axios'
 import copy from 'copy-to-clipboard'
 import { useEffect, useState } from 'react'
-
-const useStyles = makeStyles(() => ({
-  button: {
-    marginRight: '5px',
-  },
-}))
 
 export default function CopyTokenButton({ tenantLabel }) {
   const DEFAULT_LABEL = 'Copy API2 Token'
   const [label, setLabel] = useState(DEFAULT_LABEL)
   const [color, setColor] = useState('primary')
   const [intermediateState, setIntermediateState] = useState(false)
-
-  const classes = useStyles()
 
   useEffect(() => {
     if (!intermediateState) return
@@ -52,12 +44,7 @@ export default function CopyTokenButton({ tenantLabel }) {
   }
 
   return (
-    <Button
-      variant="contained"
-      color={color}
-      onClick={getToken}
-      className={classes.button}
-    >
+    <Button variant="contained" color={color} onClick={getToken}>
       {label}
     </Button>
   )

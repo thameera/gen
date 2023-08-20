@@ -16,6 +16,7 @@ import {
 import axios from 'axios'
 import CopyTokenButton from './CopyTokenButton'
 import ULPDialogButton from './dialogs/ULPDialogButton'
+import ActionsDialogButton from './dialogs/ActionsDialogButton'
 
 const useStyles = makeStyles(() => ({
   formControl: {
@@ -27,6 +28,9 @@ const useStyles = makeStyles(() => ({
   },
   buttonRow: {
     marginTop: '10px',
+  },
+  button: {
+    marginRight: '5px',
   },
 }))
 
@@ -152,13 +156,28 @@ export default function TenantSelector({ onUpdate }) {
         </FormControl>
       )}
 
-      <ULPDialogButton tenantLabel={selectedTenant.label} />
-
       <Box className={classes.buttonRow}>
-        <CopyTokenButton tenantLabel={selectedTenant.label} />
-        <Button variant="contained" color="primary" onClick={getPwChangeTicket}>
-          Open a Password Change ticket
-        </Button>
+        <span className={classes.button}>
+          <CopyTokenButton tenantLabel={selectedTenant.label} />
+        </span>
+        <span className={classes.button}>
+          <ULPDialogButton
+            className={classes.button}
+            tenantLabel={selectedTenant.label}
+          />
+        </span>
+        <span className={classes.button}>
+          <ActionsDialogButton tenantLabel={selectedTenant.label} />
+        </span>
+        <span className={classes.button}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={getPwChangeTicket}
+          >
+            Open a Password Change ticket
+          </Button>
+        </span>
       </Box>
     </>
   )
