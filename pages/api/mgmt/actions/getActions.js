@@ -1,7 +1,7 @@
 import * as mgmtApi from '../../../../lib/mgmtApi'
 
 export default async (req, res) => {
-  const { tenant, trigger } = req.query
+  const { tenant } = req.query
 
   if (!tenant) {
     res.statusCode = 400
@@ -9,16 +9,11 @@ export default async (req, res) => {
     return
   }
 
-  if (!trigger) {
-    res.statusCode = 400
-    res.end('No trigger specified')
-    return
-  }
-
   try {
-    const actions = await mgmtApi.getActions(tenant, trigger)
+    const actions = await mgmtApi.getActions(tenant)
     res.json(actions)
   } catch (e) {
+    console.log(e)
     res.statusCode = 500
     res.json({ err: e })
   }
