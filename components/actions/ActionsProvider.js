@@ -12,7 +12,7 @@ export const ActionsProvider = ({ tenant, children }) => {
   }, [])
 
   return (
-    <ActionsContext.Provider value={{ triggers, setTriggers }}>
+    <ActionsContext.Provider value={{ triggers }}>
       {children}
     </ActionsContext.Provider>
   )
