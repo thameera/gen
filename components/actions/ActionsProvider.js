@@ -11,12 +11,26 @@ export const ActionsProvider = ({ tenant, children }) => {
     setTriggers(res.data)
   }, [])
 
+  // For use by ActionTrigger.js
   const getActionsForTrigger = (triggerName) => {
     return triggers.find((trigger) => trigger.trigger === triggerName).actions
   }
 
+  // For use by ActionView.js
+  const getActionById = (actionId) => {
+    for (const trigger of triggers) {
+      for (const action of trigger.actions) {
+        if (action.action_id === actionId) {
+          return action
+        }
+      }
+    }
+  }
+
   return (
-    <ActionsContext.Provider value={{ triggers, getActionsForTrigger }}>
+    <ActionsContext.Provider
+      value={{ triggers, getActionsForTrigger, getActionById }}
+    >
       {children}
     </ActionsContext.Provider>
   )

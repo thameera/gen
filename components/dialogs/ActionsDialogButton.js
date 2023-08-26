@@ -4,12 +4,22 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  makeStyles,
 } from '@material-ui/core'
 import { useState } from 'react'
 import { ActionsProvider } from '../actions/ActionsProvider'
 import ActionTriggersList from '../actions/ActionTriggersList'
 
+const useStyles = makeStyles(() => ({
+  paper: {
+    minHeight: '80vh',
+    maxHeight: '80vh',
+  },
+}))
+
 export default function ActionsDialogButton({ tenantLabel }) {
+  const classes = useStyles()
+
   const [open, setOpen] = useState(false)
 
   /*
@@ -28,7 +38,13 @@ export default function ActionsDialogButton({ tenantLabel }) {
 
   return (
     <>
-      <Dialog open={open} onClose={handleClose} maxWidth="lg" fullWidth={true}>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        maxWidth="lg"
+        fullWidth={true}
+        classes={{ paper: classes.paper }}
+      >
         <DialogTitle>Actions</DialogTitle>
 
         <DialogContent>
