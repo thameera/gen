@@ -26,12 +26,12 @@ export default function ActionTriggersList() {
   }
 
   return (
-    <div class={classes.root}>
+    <div className={classes.root}>
       <Tabs
         value={selectedTab}
         onChange={handleChange}
         orientation="vertical"
-        class={classes.tabs}
+        className={classes.tabs}
       >
         {triggers.map((trigger, index) => (
           <Tab label={trigger.trigger} key={index} />
