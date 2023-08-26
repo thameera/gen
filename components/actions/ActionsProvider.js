@@ -11,8 +11,12 @@ export const ActionsProvider = ({ tenant, children }) => {
     setTriggers(res.data)
   }, [])
 
+  const getActionsForTrigger = (triggerName) => {
+    return triggers.find((trigger) => trigger.trigger === triggerName).actions
+  }
+
   return (
-    <ActionsContext.Provider value={{ triggers }}>
+    <ActionsContext.Provider value={{ triggers, getActionsForTrigger }}>
       {children}
     </ActionsContext.Provider>
   )

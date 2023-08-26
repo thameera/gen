@@ -1,6 +1,7 @@
 import { Tab, Tabs, makeStyles } from '@material-ui/core'
 import { useActionsContext } from './ActionsProvider'
 import { useState } from 'react'
+import ActionTrigger from './ActionTrigger'
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -39,7 +40,7 @@ export default function ActionTriggersList() {
 
       {triggers.map((trigger, index) => (
         <div key={index} hidden={selectedTab !== index}>
-          {trigger.actions.length}
+          <ActionTrigger triggerName={trigger.trigger} key={index} />
         </div>
       ))}
     </div>
