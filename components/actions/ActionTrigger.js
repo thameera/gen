@@ -11,6 +11,8 @@ const useStyles = makeStyles(() => ({
   },
   tabs: {
     borderRight: `1px solid #ccc`,
+    minWidth: '200px',
+    maxWidth: '200px',
   },
 }))
 
