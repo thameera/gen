@@ -21,7 +21,6 @@ export default function ActionTriggersList() {
   const [selectedTab, setSelectedTab] = useState(0)
 
   const { triggers } = useActionsContext()
-  console.log(triggers)
 
   const handleChange = (ev, newValue) => {
     setSelectedTab(newValue)

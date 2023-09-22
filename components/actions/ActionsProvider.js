@@ -3,13 +3,21 @@ import { createContext, useContext, useEffect, useState } from 'react'
 
 export const ActionsContext = createContext()
 
-export const ActionsProvider = ({ tenant, children }) => {
+export const ActionsProvider = ({ children }) => {
   const [triggers, setTriggers] = useState([])
+  const [currentTenant, setCurrentTenant] = useState('')
 
-  useEffect(async () => {
+  const initialize = async (tenant) => {
+    // Don't reload if we fetched actions for this tenant before
+    if (tenant === currentTenant) {
+      return
+    }
+
     const res = await axios(`/api/mgmt/actions/getActions?tenant=${tenant}`)
     setTriggers(res.data)
-  }, [])
+    setCurrentTenant(tenant)
+    console.log('Fetched actions: ', res.data)
+  }
 
   // For use by ActionTrigger.js
   const getActionsForTrigger = (triggerName) => {
@@ -29,7 +37,7 @@ export const ActionsProvider = ({ tenant, children }) => {
 
   return (
     <ActionsContext.Provider
-      value={{ triggers, getActionsForTrigger, getActionById }}
+      value={{ triggers, initialize, getActionsForTrigger, getActionById }}
     >
       {children}
     </ActionsContext.Provider>

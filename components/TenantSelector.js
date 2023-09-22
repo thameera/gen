@@ -17,6 +17,7 @@ import axios from 'axios'
 import CopyTokenButton from './CopyTokenButton'
 import ULPDialogButton from './dialogs/ULPDialogButton'
 import ActionsDialogButton from './dialogs/ActionsDialogButton'
+import { ActionsProvider } from './actions/ActionsProvider'
 
 const useStyles = makeStyles(() => ({
   formControl: {
@@ -167,7 +168,9 @@ export default function TenantSelector({ onUpdate }) {
           />
         </span>
         <span className={classes.button}>
-          <ActionsDialogButton tenantLabel={selectedTenant.label} />
+          <ActionsProvider>
+            <ActionsDialogButton tenantLabel={selectedTenant.label} />
+          </ActionsProvider>
         </span>
         <span className={classes.button}>
           <Button

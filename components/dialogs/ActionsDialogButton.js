@@ -7,8 +7,8 @@ import {
   makeStyles,
 } from '@material-ui/core'
 import { useState } from 'react'
-import { ActionsProvider } from '../actions/ActionsProvider'
 import ActionTriggersList from '../actions/ActionTriggersList'
+import { useActionsContext } from '../actions/ActionsProvider'
 
 const useStyles = makeStyles(() => ({
   paper: {
@@ -19,6 +19,7 @@ const useStyles = makeStyles(() => ({
 
 export default function ActionsDialogButton({ tenantLabel }) {
   const classes = useStyles()
+  const { initialize } = useActionsContext()
 
   const [open, setOpen] = useState(false)
 
@@ -26,6 +27,8 @@ export default function ActionsDialogButton({ tenantLabel }) {
    * Open dialog
    */
   const handleClickOpen = async () => {
+    // Fetch actions for this tenant
+    initialize(tenantLabel)
     setOpen(true)
   }
 
@@ -48,9 +51,7 @@ export default function ActionsDialogButton({ tenantLabel }) {
         <DialogTitle>Actions</DialogTitle>
 
         <DialogContent>
-          <ActionsProvider tenant={tenantLabel}>
-            <ActionTriggersList />
-          </ActionsProvider>
+          <ActionTriggersList />
         </DialogContent>
 
         <DialogActions>
