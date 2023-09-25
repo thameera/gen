@@ -14,9 +14,24 @@ export const ActionsProvider = ({ children }) => {
     }
 
     const res = await axios(`/api/mgmt/actions/getActions?tenant=${tenant}`)
-    setTriggers(res.data)
+
+    // Enrich actions
+    const triggers = res.data.map((t) => {
+      const actions = t.actions.map((a) => {
+        return {
+          ...a,
+          origCode: a.code,
+        }
+      })
+      return {
+        ...t,
+        actions,
+      }
+    })
+
+    setTriggers(triggers)
     setCurrentTenant(tenant)
-    console.log('Fetched actions: ', res.data)
+    console.log('Fetched actions: ', triggers)
   }
 
   // For use by ActionTrigger.js
@@ -35,9 +50,27 @@ export const ActionsProvider = ({ children }) => {
     }
   }
 
+  // Updates the in-memory action only
+  const updateAction = (actionId, newCode) => {
+    for (const trigger of triggers) {
+      for (const action of trigger.actions) {
+        if (action.action_id === actionId) {
+          action.code = newCode
+        }
+      }
+    }
+    setTriggers(triggers)
+  }
+
   return (
     <ActionsContext.Provider
-      value={{ triggers, initialize, getActionsForTrigger, getActionById }}
+      value={{
+        triggers,
+        initialize,
+        getActionsForTrigger,
+        getActionById,
+        updateAction,
+      }}
     >
       {children}
     </ActionsContext.Provider>

@@ -13,8 +13,12 @@ const useStyles = makeStyles(() => ({
 export default function ActionView({ actionId }) {
   const classes = useStyles()
 
-  const { getActionById } = useActionsContext()
+  const { getActionById, updateAction } = useActionsContext()
   const action = getActionById(actionId)
+
+  const onChange = (val) => {
+    updateAction(actionId, val)
+  }
 
   return (
     <div className={classes.root}>
@@ -23,6 +27,7 @@ export default function ActionView({ actionId }) {
         height="65vh"
         width="700px"
         extensions={[javascript()]}
+        onChange={onChange}
       />
     </div>
   )
