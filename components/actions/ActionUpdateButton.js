@@ -2,15 +2,25 @@ import { Button } from '@material-ui/core'
 import { useActionsContext } from './ActionsProvider'
 
 export default function ActionView() {
-  const { isModified } = useActionsContext()
+  const { patchAction, status } = useActionsContext()
 
-  const handleUpdate = () => {}
+  if (status === '') return null
 
-  if (!isModified) return null
+  const buttonData = {
+    modified: { text: 'Update', disabled: false, color: 'primary' },
+    patching: { text: 'Updating...', disabled: true, color: 'default' },
+    deploying: { text: 'Deploying...', disabled: true, color: 'default' },
+    deployed: { text: 'Deployed!', disabled: true, color: 'default' },
+    error: { text: 'Error!', disabled: true, color: 'secondary' },
+  }
 
   return (
-    <Button onClick={handleUpdate} color="primary">
-      Update
+    <Button
+      onClick={patchAction}
+      color={buttonData[status].color}
+      disabled={buttonData[status].disabled}
+    >
+      {buttonData[status].text}
     </Button>
   )
 }

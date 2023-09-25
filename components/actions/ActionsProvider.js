@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 
 export const ActionsContext = createContext()
 
@@ -7,7 +7,19 @@ export const ActionsProvider = ({ children }) => {
   const [triggers, setTriggers] = useState([])
   const [currentTenant, setCurrentTenant] = useState('')
   const [currentAction, setCurrentAction] = useState({})
-  const [isModified, setIsModified] = useState(false)
+  const [status, setStatus] = useState('')
+
+  /*
+   * Reset the status message after a successful update, after a short delay
+   */
+  useEffect(() => {
+    if (status !== 'deployed' && status !== 'error') {
+      return
+    }
+    setTimeout(() => {
+      setStatus('')
+    }, 1000)
+  }, [status])
 
   const initialize = async (tenant) => {
     // Don't reload if we fetched actions for this tenant before
@@ -37,6 +49,29 @@ export const ActionsProvider = ({ children }) => {
     console.log('Fetched actions: ', triggers)
   }
 
+  const patchAction = async () => {
+    setStatus('patching')
+    try {
+      await axios.post('/api/mgmt/actions/patchAction', {
+        tenant: currentTenant,
+        action_id: currentAction.action_id,
+        code: currentAction.code,
+      })
+      setStatus('deploying')
+      await axios.post('/api/mgmt/actions/deployAction', {
+        tenant: currentTenant,
+        action_id: currentAction.action_id,
+      })
+      setStatus('deployed')
+
+      currentAction.origCode = currentAction.code
+      setCurrentAction(currentAction)
+    } catch (e) {
+      console.log(e)
+      setStatus('error')
+    }
+  }
+
   // For use by ActionTrigger.js
   const getActionsForTrigger = (triggerName) => {
     return triggers.find((trigger) => trigger.trigger === triggerName).actions
@@ -64,7 +99,7 @@ export const ActionsProvider = ({ children }) => {
     currentAction.code = newCode
     setCurrentAction(currentAction)
     setTriggers(triggers)
-    setIsModified(currentAction.code !== currentAction.origCode)
+    setStatus(currentAction.code !== currentAction.origCode ? 'modified' : '')
   }
 
   // To be called by ActionView when it becomes visible
@@ -72,7 +107,7 @@ export const ActionsProvider = ({ children }) => {
     const action = getActionById(actionId)
     if (action) {
       setCurrentAction(action)
-      setIsModified(action.code !== action.origCode)
+      setStatus(currentAction.code !== currentAction.origCode ? 'modified' : '')
     }
   }
 
@@ -85,7 +120,8 @@ export const ActionsProvider = ({ children }) => {
         updateAction,
         setCurrentActionById,
         currentAction,
-        isModified,
+        status,
+        patchAction,
       }}
     >
       {children}
