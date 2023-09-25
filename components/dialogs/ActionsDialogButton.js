@@ -8,6 +8,7 @@ import {
 } from '@material-ui/core'
 import { useState } from 'react'
 import ActionTriggersList from '../actions/ActionTriggersList'
+import ActionUpateButton from '../actions/ActionUpdateButton'
 import { useActionsContext } from '../actions/ActionsProvider'
 
 const useStyles = makeStyles(() => ({
@@ -55,6 +56,7 @@ export default function ActionsDialogButton({ tenantLabel }) {
         </DialogContent>
 
         <DialogActions>
+          <ActionUpateButton />
           <Button onClick={handleClose} color="secondary">
             Close
           </Button>

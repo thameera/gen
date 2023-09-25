@@ -7,6 +7,7 @@ export const ActionsProvider = ({ children }) => {
   const [triggers, setTriggers] = useState([])
   const [currentTenant, setCurrentTenant] = useState('')
   const [currentAction, setCurrentAction] = useState({})
+  const [isModified, setIsModified] = useState(false)
 
   const initialize = async (tenant) => {
     // Don't reload if we fetched actions for this tenant before
@@ -63,6 +64,7 @@ export const ActionsProvider = ({ children }) => {
     currentAction.code = newCode
     setCurrentAction(currentAction)
     setTriggers(triggers)
+    setIsModified(currentAction.code !== currentAction.origCode)
   }
 
   // To be called by ActionView when it becomes visible
@@ -70,6 +72,7 @@ export const ActionsProvider = ({ children }) => {
     const action = getActionById(actionId)
     if (action) {
       setCurrentAction(action)
+      setIsModified(action.code !== action.origCode)
     }
   }
 
@@ -82,6 +85,7 @@ export const ActionsProvider = ({ children }) => {
         updateAction,
         setCurrentActionById,
         currentAction,
+        isModified,
       }}
     >
       {children}
