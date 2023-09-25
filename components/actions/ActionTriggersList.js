@@ -41,7 +41,11 @@ export default function ActionTriggersList() {
 
       {triggers.map((trigger, index) => (
         <div key={index} hidden={selectedTab !== index}>
-          <ActionTrigger triggerName={trigger.trigger} key={index} />
+          <ActionTrigger
+            triggerName={trigger.trigger}
+            key={index}
+            isVisible={selectedTab == index}
+          />
         </div>
       ))}
     </div>

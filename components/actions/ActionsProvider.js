@@ -1,11 +1,12 @@
 import axios from 'axios'
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useState } from 'react'
 
 export const ActionsContext = createContext()
 
 export const ActionsProvider = ({ children }) => {
   const [triggers, setTriggers] = useState([])
   const [currentTenant, setCurrentTenant] = useState('')
+  const [currentAction, setCurrentAction] = useState({})
 
   const initialize = async (tenant) => {
     // Don't reload if we fetched actions for this tenant before
@@ -31,6 +32,7 @@ export const ActionsProvider = ({ children }) => {
 
     setTriggers(triggers)
     setCurrentTenant(tenant)
+    setCurrentAction(triggers[0].actions[0] || {})
     console.log('Fetched actions: ', triggers)
   }
 
@@ -52,14 +54,23 @@ export const ActionsProvider = ({ children }) => {
 
   // Updates the in-memory action only
   const updateAction = (actionId, newCode) => {
-    for (const trigger of triggers) {
-      for (const action of trigger.actions) {
-        if (action.action_id === actionId) {
-          action.code = newCode
-        }
-      }
+    // This check is probably not needed, but just in case
+    if (currentAction.action_id !== actionId) {
+      console.log(currentAction)
+      throw new Error('Action ID mismatch')
     }
+
+    currentAction.code = newCode
+    setCurrentAction(currentAction)
     setTriggers(triggers)
+  }
+
+  // To be called by ActionView when it becomes visible
+  const setCurrentActionById = (actionId) => {
+    const action = getActionById(actionId)
+    if (action) {
+      setCurrentAction(action)
+    }
   }
 
   return (
@@ -68,8 +79,9 @@ export const ActionsProvider = ({ children }) => {
         triggers,
         initialize,
         getActionsForTrigger,
-        getActionById,
         updateAction,
+        setCurrentActionById,
+        currentAction,
       }}
     >
       {children}

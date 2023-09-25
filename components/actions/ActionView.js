@@ -2,6 +2,7 @@ import { makeStyles } from '@material-ui/core'
 import { useActionsContext } from './ActionsProvider'
 import CodeMirror from '@uiw/react-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
+import { useEffect } from 'react'
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -10,11 +11,19 @@ const useStyles = makeStyles(() => ({
   },
 }))
 
-export default function ActionView({ actionId }) {
+export default function ActionView({ actionId, isVisible }) {
   const classes = useStyles()
+  const {
+    currentAction,
+    updateAction,
+    setCurrentActionById,
+  } = useActionsContext()
 
-  const { getActionById, updateAction } = useActionsContext()
-  const action = getActionById(actionId)
+  useEffect(() => {
+    if (isVisible) {
+      setCurrentActionById(actionId)
+    }
+  }, [isVisible])
 
   const onChange = (val) => {
     updateAction(actionId, val)
@@ -23,7 +32,7 @@ export default function ActionView({ actionId }) {
   return (
     <div className={classes.root}>
       <CodeMirror
-        value={action.code}
+        value={currentAction ? currentAction.code : ''}
         height="65vh"
         width="700px"
         extensions={[javascript()]}

@@ -16,7 +16,7 @@ const useStyles = makeStyles(() => ({
   },
 }))
 
-export default function ActionTrigger({ triggerName }) {
+export default function ActionTrigger({ triggerName, isVisible }) {
   const classes = useStyles()
 
   const [selectedTab, setSelectedTab] = useState(0)
@@ -43,7 +43,10 @@ export default function ActionTrigger({ triggerName }) {
 
       {actions.map((action, index) => (
         <div key={index} hidden={selectedTab !== index}>
-          <ActionView actionId={action.action_id} />
+          <ActionView
+            actionId={action.action_id}
+            isVisible={selectedTab == index && isVisible}
+          />
         </div>
       ))}
     </div>
