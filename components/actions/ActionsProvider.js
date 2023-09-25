@@ -102,6 +102,13 @@ export const ActionsProvider = ({ children }) => {
     setStatus(currentAction.code !== currentAction.origCode ? 'modified' : '')
   }
 
+  const revertAction = () => {
+    currentAction.code = currentAction.origCode
+    setCurrentAction(currentAction)
+    setTriggers(triggers)
+    setStatus('')
+  }
+
   // To be called by ActionView when it becomes visible
   const setCurrentActionById = (actionId) => {
     const action = getActionById(actionId)
@@ -122,6 +129,7 @@ export const ActionsProvider = ({ children }) => {
         currentAction,
         status,
         patchAction,
+        revertAction,
       }}
     >
       {children}

@@ -2,7 +2,7 @@ import { Button } from '@material-ui/core'
 import { useActionsContext } from './ActionsProvider'
 
 export default function ActionView() {
-  const { patchAction, status } = useActionsContext()
+  const { patchAction, revertAction, status } = useActionsContext()
 
   if (status === '') return null
 
@@ -15,12 +15,19 @@ export default function ActionView() {
   }
 
   return (
-    <Button
-      onClick={patchAction}
-      color={buttonData[status].color}
-      disabled={buttonData[status].disabled}
-    >
-      {buttonData[status].text}
-    </Button>
+    <>
+      {status === 'modified' && (
+        <Button onClick={revertAction} color="default">
+          Revert
+        </Button>
+      )}
+      <Button
+        onClick={patchAction}
+        color={buttonData[status].color}
+        disabled={buttonData[status].disabled}
+      >
+        {buttonData[status].text}
+      </Button>
+    </>
   )
 }
