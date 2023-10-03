@@ -20,7 +20,7 @@ const useStyles = makeStyles(() => ({
 
 export default function ActionsDialogButton({ tenantLabel }) {
   const classes = useStyles()
-  const { initialize } = useActionsContext()
+  const { initialize, getManageUrl } = useActionsContext()
 
   const [open, setOpen] = useState(false)
 
@@ -40,6 +40,13 @@ export default function ActionsDialogButton({ tenantLabel }) {
     setOpen(false)
   }
 
+  /*
+   * Open Action in manage
+   */
+  const handleManage = () => {
+    window.open(getManageUrl(), '_blank')
+  }
+
   return (
     <>
       <Dialog
@@ -57,6 +64,9 @@ export default function ActionsDialogButton({ tenantLabel }) {
 
         <DialogActions>
           <ActionUpateButton />
+          <Button onClick={handleManage} color="default">
+            {'\u2197'} Manage
+          </Button>
           <Button onClick={handleClose} color="secondary">
             Close
           </Button>

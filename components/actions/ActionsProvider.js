@@ -1,3 +1,4 @@
+import * as tenantMgr from '../../lib/tenants'
 import axios from 'axios'
 import { createContext, useContext, useEffect, useState } from 'react'
 
@@ -118,6 +119,11 @@ export const ActionsProvider = ({ children }) => {
     }
   }
 
+  const getManageUrl = () => {
+    const t = tenantMgr.getTenantByLabelForFrontend(currentTenant)
+    return `${t.manageUrl}/actions/library/details/${currentAction.action_id}`
+  }
+
   return (
     <ActionsContext.Provider
       value={{
@@ -130,6 +136,7 @@ export const ActionsProvider = ({ children }) => {
         status,
         patchAction,
         revertAction,
+        getManageUrl,
       }}
     >
       {children}
